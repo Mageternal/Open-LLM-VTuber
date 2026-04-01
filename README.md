@@ -1,3 +1,4 @@
+[翻译该文档](./README.CN.md)
 **Branch Usage Instructions:**
 
 If you've found this branch, ***congratulations***, you might be able to avoid many pitfalls.
