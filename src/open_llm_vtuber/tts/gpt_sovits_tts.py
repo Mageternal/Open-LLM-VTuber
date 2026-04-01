@@ -63,7 +63,7 @@ class TTSEngine(TTSInterface):
                 self._emotion_root = Path(ref_audio_path).parent
             else:
                 self._emotion_root = Path(".")
-            # 预编译情感标签正则，避免每次重复编译
+            # Precompile sentiment tag regular expressions to avoid repeated compilation each time
             self._emotion_tag_re = re.compile(
                 r'<(' + '|'.join(re.escape(e) for e in self.available_emotions) + r')>'
             )
@@ -72,9 +72,9 @@ class TTSEngine(TTSInterface):
                 f"根目录: {self._emotion_root}"
             )
 
-    # ------------------------------------------------------------------ #
-    #  语种识别                                                             #
-    # ------------------------------------------------------------------ #
+    # --------------------------------------------------------------------------------------------------------- #
+    #  语种识别(目前只支持日语、中文)Language recognition(Currently only Japanese and Chinese are supported)    #
+    # --------------------------------------------------------------------------------------------------------- #
 
     def _detect_lang(self, text: str) -> str:
         """根据字符集判断语种，返回 GPT-SoVITS 的 prompt_lang 值。"""
@@ -89,7 +89,7 @@ class TTSEngine(TTSInterface):
         return "en"
 
     # ------------------------------------------------------------------ #
-    #  情感音频解析                                                         #
+    #  情感音频解析Emotional Audio Analysis                              #
     # ------------------------------------------------------------------ #
 
     def _get_emotion_audio(self, emotion: str) -> tuple[str, str, str]:
@@ -115,10 +115,11 @@ class TTSEngine(TTSInterface):
         return str(chosen_wav.resolve()), prompt, lang  # ← 加 .resolve()
         return str(chosen_wav), prompt, lang
 
-    # ------------------------------------------------------------------ #
-    #  情感标签提取                                                         #
-    #  只识别 <emotion> 标准格式（ignore_angle_brackets: false）             #
-    # ------------------------------------------------------------------ #
+    # ------------------------------------------------------------------------------ #
+    #  情感标签提取Emotion tag extraction                                            #
+    #  只识别 <emotion> 标准格式（ignore_angle_brackets: false）                     #
+    #  Only recognizes the standard <emotion> format (ignore_angle_brackets: false)  #
+    # -------------------------------------------------------------------------------#
 
     def _extract_emotion(self, text: str) -> str | None:
         """从文本中提取第一个情感标签，返回情感名或 None。"""
@@ -126,9 +127,12 @@ class TTSEngine(TTSInterface):
         return m.group(1) if m else None
 
     # ------------------------------------------------------------------ #
-    #  文本清洗                                                             #
-    #  - 清洗 <emotion> 情感标签（保留标签后的文字）                          #
-    #  - 清洗 [xxx] 表情标签                                                #
+    #  文本清洗                                                          #
+    #  - 清洗 <emotion> 情感标签（保留标签后的文字）                     #
+    #  - 清洗 [xxx] 表情标签                                             #
+    # Text Cleaning                                                      #
+    # - Clean <emotion> emotion tags (keep the text after the tag)       #
+    # - Clean [xxx] emoji tags                                           #
     # ------------------------------------------------------------------ #
 
     def _clean_text(self, text: str) -> str:
@@ -160,7 +164,7 @@ class TTSEngine(TTSInterface):
         return re.sub(r'\s+', ' ', cleaned).strip()
 
     # ------------------------------------------------------------------ #
-    #  单段 TTS API 调用                                                    #
+    #  单段 TTS API 调用Single-segment TTS API call                      #
     # ------------------------------------------------------------------ #
 
     def _call_tts_api(
@@ -207,7 +211,7 @@ class TTSEngine(TTSInterface):
             return None
 
     # ------------------------------------------------------------------ #
-    #  WAV 合并                                                             #
+    #  WAV 合并WAV merging                                               #
     # ------------------------------------------------------------------ #
 
     def _merge_wav_files(self, input_files: list[str], output_file: str):
@@ -234,7 +238,7 @@ class TTSEngine(TTSInterface):
         logger.debug(f"[合并] {len(frames_list)} 段 → {output_file}")
 
     # ------------------------------------------------------------------ #
-    #  主入口                                                               #
+    #  主入口main entrance                                               #
     # ------------------------------------------------------------------ #
 
     def generate_audio(self, text, file_name_no_ext=None):
@@ -242,13 +246,13 @@ class TTSEngine(TTSInterface):
         logger.debug(f"[TTS输入] {text}")
 
         if self.available_emotions:
-            # 检测新情感标签，有则更新持续状态
+            # 检测新情感标签，有则更新持续状态 Detect new sentiment tags and update the status if found.
             new_emotion = self._extract_emotion(text)
             if new_emotion:
                 self._current_emotion = new_emotion
                 logger.debug(f"[TTS情感] 切换 → {self._current_emotion}")
 
-            # 用持续状态决定参考音频
+            # 用持续状态决定参考音频 Use the continuous state to determine the reference audio.
             if self._current_emotion:
                 ref_audio, prompt, lang = self._get_emotion_audio(self._current_emotion)
             else:
@@ -260,7 +264,7 @@ class TTSEngine(TTSInterface):
                 return None
             return self._call_tts_api(cleaned, ref_audio, prompt, file_name, prompt_lang=lang)
 
-        # 普通模式
+        # 普通模式 Normal Default Mode
         cleaned_text = self._clean_text(text)
         return self._call_tts_api(
             cleaned_text, self.ref_audio_path, self.prompt_text, file_name

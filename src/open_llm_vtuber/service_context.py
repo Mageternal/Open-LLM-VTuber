@@ -461,7 +461,7 @@ class ServiceContext:
                 prompt_content = prompt_content.replace(
                     "[<insert_emomap_keys>]", self.live2d_model.emo_str
                 )
-            # 新增：替换 TTS 情感标签占位符
+            # Added: Replaced TTS sentiment tag placeholders
             prompt_content = prompt_content.replace(
                 "[<insert_tts_emotions>]",
                 self._get_tts_emotion_str()
