@@ -348,10 +348,9 @@ character_config:
 
     gpt_sovits_tts:
       # put ref audio to root path of GPT-Sovits, or set the path here
+      # Default reference mode: Even if you use sentiment pattern, you should still specify the 'default reference' to increase redundancy.
       api_url: 'http://127.0.0.1:9880/tts' # API URL
       text_lang: 'en' # Text language used by the AI
-
-      # Default reference mode: Even if you use sentiment pattern, you should still specify the 'default reference' to increase redundancy.
       ref_audio_path: '' # Path to the reference audio (required)
       prompt_lang: 'en' # Language of the reference audio prompt text (required).If the 'emotional mode' is normal, it will ignore the automatic recognition of multiple languages. If the 'emotional mode' is abnormal, it will revert to the default mode.
       prompt_text: '' # Optional text of the reference audio prompt text
@@ -366,9 +365,9 @@ character_config:
       batch_size: '2' # Batch size
       media_type: 'wav' # Media type
       streaming_mode: 'false' # Returns the streaming response
-      parallel_infer: 'True' # Parallel inference switch, for situations where parallel inference cannot be used
+      parallel_infer: 'false' # Parallel inference switch, for situations where parallel inference cannot be used
       speed_factor: '1.0' # Controls the synthesized sound speed.
-      top_k: '' # Highest k-sampling, for adjusting timbre fit.
+      top_k: '30' # Highest k-sampling, for adjusting timbre fit.
 
     fish_api_tts:
       # The API key for the Fish TTS API.

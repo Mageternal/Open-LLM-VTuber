@@ -356,10 +356,9 @@ character_config:
 
     gpt_sovits_tts:
       # 将参考音频放到 GPT-Sovits 的根路径，或在此处设置路径
+      # 默认参考模式，就算你使用情感模式，也要写默认参考以增加冗余
       api_url: 'http://127.0.0.1:9880/tts' # API URL
       text_lang: 'zh' # ai使用的文本语言
-
-      # 默认参考模式，就算你使用情感模式，也要写默认参考以增加冗余
       ref_audio_path: '' # str.(必需) 参考音频的路径
       prompt_lang: 'zh' # str.(必需) 参考音频提示文本的语言。'情感模式'正常，会忽略他自动识别多语言，如果'情感模式'不正常回退到默认模式例外。
       prompt_text: '' # str.(可选) 参考音频的提示文本
@@ -374,9 +373,9 @@ character_config:
       batch_size: '2' # 批处理大小
       media_type: 'wav' # 媒体类型
       streaming_mode: 'false' # 返回流响应
-      parallel_infer: 'True' # 并行推理开关,适配某些情况无法使用并行推理的问题
+      parallel_infer: 'false' # 并行推理开关,适配某些情况无法使用并行推理的问题
       speed_factor: '1.0' # 控制合成音速。
-      top_k: '' # 最高k抽样，为了调整音色契合度。
+      top_k: '30' # 最高k抽样，为了调整音色契合度。
 
     fish_api_tts:
       # Fish TTS API 的 API 密钥。
